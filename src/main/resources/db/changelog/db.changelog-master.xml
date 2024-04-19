@@ -1,6 +1,21 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <include file="xml/00001__User.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00002__Project.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00003__TaskType.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00004__TaskStatus.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00005__Task.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00006__TaskStatusTransition.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00007__UserAccess.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00008__Tag.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00009__LinkType.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00010__Link.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00011__Comment.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00012__AdditionalFieldValueType.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00013__AdditionalFieldType.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00014__AdditionalField.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00015__Attachment.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00016__TaskFilter.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

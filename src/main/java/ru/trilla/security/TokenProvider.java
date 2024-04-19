@@ -21,7 +21,7 @@ import java.util.Optional;
 public class TokenProvider {
     private static final String BODY_KEY = "body";
     private static final Long EXPIRATION_IN_SECONDS = 86400L;
-    @Value("${osum.jwt.secret}")
+    @Value("${trilla.jwt.secret}")
     private final String secret;
     private final ObjectMapper objectMapper;
     private String encodedSecret;

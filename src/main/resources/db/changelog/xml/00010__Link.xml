@@ -1,0 +1,37 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="denis5726" id="1">
+        <createTable tableName="link">
+            <column name="from_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="in_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="from_id, in_id, link_type_id" constraintName="link_pkey" tableName="link"/>
+
+        <addForeignKeyConstraint baseColumnNames="link_type_id" baseTableName="link"
+                                 constraintName="link_link_type_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="link_type"/>
+        <addForeignKeyConstraint baseColumnNames="in_id" baseTableName="link"
+                                 constraintName="link_in_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="task"/>
+        <addForeignKeyConstraint baseColumnNames="from_id" baseTableName="link"
+                                 constraintName="link_from_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="task"/>
+    </changeSet>
+</databaseChangeLog>

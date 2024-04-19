@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="denis5726" id="1">
+        <createTable tableName="task_status_transition">
+            <column name="from_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="in_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="task_status_transition" columnNames="from_id,in_id"/>
+
+        <addForeignKeyConstraint baseColumnNames="from_id" baseTableName="task_status_transition"
+                                 constraintName="task_status_transition_from_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="task_status"/>
+        <addForeignKeyConstraint baseColumnNames="in_id" baseTableName="task_status_transition"
+                                 constraintName="task_status_transition_in_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="task_status"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,8 +1,9 @@
 package ru.trilla.entity;
 
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,8 @@ import java.util.UUID;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Tag {
-    @EmbeddedId
+    @Id
+    @GeneratedValue
     private UUID id;
     private String value;
     @ManyToOne

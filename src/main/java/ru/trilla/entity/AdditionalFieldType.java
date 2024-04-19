@@ -2,6 +2,8 @@ package ru.trilla.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 public class AdditionalFieldType {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
     @ManyToOne

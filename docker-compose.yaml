@@ -1,0 +1,58 @@
+version: '3'
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.96.0/20
+          gateway: 192.168.96.1
+services:
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:latest
+#    container_name: 'osum-zookeeper'
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000
+#  kafka:
+#    image: confluentinc/cp-kafka:latest
+#    container_name: 'osum-kafka'
+#    depends_on:
+#      - zookeeper
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_CREATE_TOPICS: "TOPIC:1:1"
+  postgres:
+    image: postgres:15
+    container_name: 'osum-postgres'
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: "osum"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PG_DATA: /var/lib/postgresql/data/db-files
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: my-password
+      REDIS_PORT: 6379
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./local/prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
