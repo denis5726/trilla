@@ -3,6 +3,8 @@ package ru.trilla.entity;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,8 @@ import java.time.ZonedDateTime;
 public class UserAccess {
     @EmbeddedId
     private Id id;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @CreatedDate
     private ZonedDateTime createdAt;
 
@@ -40,8 +44,5 @@ public class UserAccess {
         @ManyToOne
         @JoinColumn
         private Project project;
-        @ManyToOne
-        @JoinColumn
-        private Role role;
     }
 }
