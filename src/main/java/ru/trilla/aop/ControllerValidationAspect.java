@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import ru.trilla.exception.ValidationException;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class ControllerValidationAspect {
     @Before("within(@org.springframework.web.bind.annotation.RestController *) && execution(public * *(..))")
     void validate(JoinPoint joinPoint) {
         final var violations = Arrays.stream(joinPoint.getArgs())
+                .filter(Objects::nonNull)
                 .flatMap(arg -> validator.validate(arg).stream())
                 .collect(Collectors.toSet());
         if (!violations.isEmpty()) {

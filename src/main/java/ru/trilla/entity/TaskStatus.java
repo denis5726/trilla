@@ -1,5 +1,6 @@
 package ru.trilla.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,7 @@ public class TaskStatus {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    @OneToMany
+    @OneToMany(mappedBy = "from", cascade = CascadeType.PERSIST)
     private List<TaskStatusTransition> taskStatusTransitions;
     @ManyToOne
     @JoinColumn

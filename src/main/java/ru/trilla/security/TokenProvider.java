@@ -34,7 +34,7 @@ public class TokenProvider {
     public boolean isValidToken(String token) {
         try {
             final var claims = Jwts.parser().setSigningKey(encodedSecret).parseClaimsJws(token);
-            return claims.getBody().getExpiration().before(new Date());
+            return claims.getBody().getExpiration().after(new Date());
         } catch (RuntimeException e) {
             log.error("Exception during parsing token: {}", e.getMessage());
             return false;

@@ -18,4 +18,6 @@
     <include file="xml/00015__Attachment.xml" relativeToChangelogFile="true"/>
     <include file="xml/00016__TaskFilter.xml" relativeToChangelogFile="true"/>
 
+    <include file="dev/00001__Data.xml" context="!prom" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

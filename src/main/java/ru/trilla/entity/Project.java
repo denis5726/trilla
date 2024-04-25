@@ -1,5 +1,6 @@
 package ru.trilla.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -31,15 +32,15 @@ public class Project {
     private UUID id;
     private String fullName;
     private String code;
-    @OneToMany
+    @OneToMany(mappedBy = "project")
     private List<TaskFilter> taskFilters;
-    @OneToMany
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<AdditionalFieldValueType> additionalFieldValueTypes;
-    @OneToMany
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<UserAccess> userAccesses;
-    @OneToMany
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private List<TaskType> taskTypes;
-    @OneToMany
+    @OneToMany(mappedBy = "project")
     private List<Task> tasks;
     @CreatedDate
     private ZonedDateTime createdAt;
