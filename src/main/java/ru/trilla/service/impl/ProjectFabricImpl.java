@@ -1,6 +1,9 @@
 package ru.trilla.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import ru.trilla.dto.ProjectCreatingRequest;
 import ru.trilla.entity.AdditionalFieldValueType;
 import ru.trilla.entity.Project;
 import ru.trilla.entity.Role;
@@ -9,113 +12,144 @@ import ru.trilla.entity.TaskStatusTransition;
 import ru.trilla.entity.TaskType;
 import ru.trilla.entity.User;
 import ru.trilla.entity.UserAccess;
+import ru.trilla.repository.AdditionalFieldValueTypeRepository;
+import ru.trilla.repository.ProjectRepository;
+import ru.trilla.repository.TaskStatusRepository;
+import ru.trilla.repository.TaskStatusTransitionRepository;
+import ru.trilla.repository.TaskTypeRepository;
+import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.service.ProjectFabric;
 
-import java.util.Collections;
 import java.util.List;
 
-// TODO Здесь же выполнять сохранение всех зависимых объектов
 @Component
+@RequiredArgsConstructor
 public class ProjectFabricImpl implements ProjectFabric {
+    private final ProjectRepository projectRepository;
+    private final UserAccessRepository userAccessRepository;
+    private final TaskTypeRepository taskTypeRepository;
+    private final TaskStatusRepository taskStatusRepository;
+    private final TaskStatusTransitionRepository taskStatusTransitionRepository;
+    private final AdditionalFieldValueTypeRepository additionalFieldValueTypeRepository;
 
     @Override
-    public Project createSimpleProject(User owner) {
-        final var project = new Project();
-        final var userAccess = UserAccess.builder()
-                .user(owner)
-                .project(project)
-                .role(Role.ADMIN)
-                .build();
+    @Transactional
+    public Project createSimpleProject(ProjectCreatingRequest request, User owner) {
+        final var project = projectRepository.save(
+                Project.builder()
+                        .fullName(request.fullName())
+                        .code(request.code())
+                        .build()
+        );
+        userAccessRepository.save(
+                UserAccess.builder()
+                        .id(
+                                UserAccess.Id.builder()
+                                        .user(owner)
+                                        .project(project)
+                                        .build()
+                        )
+                        .role(Role.ADMIN)
+                        .build()
+        );
 
-        project.setAdditionalFieldValueTypes(buildSimpleAdditionalFieldValueTypes(project));
-        project.setTaskTypes(buildSimpleProjectTaskTypes(project));
-        project.setUserAccesses(Collections.singletonList(userAccess));
+        saveSimpleAdditionalFieldValueTypes(project);
+        saveSimpleProjectTaskTypes(project);
 
         return project;
     }
 
-    private List<TaskType> buildSimpleProjectTaskTypes(Project project) {
-        return List.of(buildStoryTaskType(project), buildBugTaskType(project));
+    private void saveSimpleProjectTaskTypes(Project project) {
+        saveStoryTaskType(project);
+        saveBugTaskType(project);
     }
 
-    private TaskType buildStoryTaskType(Project project) {
-        final var story = TaskType.builder()
-                .project(project)
-                .name("Story")
-                .build();
-        final var toDo = buildFromName("To Do", story);
-        final var inDiscovery = buildFromName("In Discovery", story);
-        final var inProgress = buildFromName("In Progress", story);
-        final var readyForTesting = buildFromName("Ready for Testing", story);
-        final var testing = buildFromName("Testing", story);
-        final var done = buildFromName("Done", story);
-        final var canceled = buildFromName("Canceled", story);
-        toDo.setTaskStatusTransitions(List.of(
-                buildFromTaskStatuses(toDo, inDiscovery),
-                buildFromTaskStatuses(toDo, inProgress),
-                buildFromTaskStatuses(toDo, canceled)
-        ));
-        inDiscovery.setTaskStatusTransitions(List.of(
-                buildFromTaskStatuses(inDiscovery, toDo),
-                buildFromTaskStatuses(inDiscovery, inProgress),
-                buildFromTaskStatuses(inDiscovery, canceled)
-        ));
-        inProgress.setTaskStatusTransitions(List.of(
-                buildFromTaskStatuses(inProgress, toDo),
-                buildFromTaskStatuses(inProgress, inDiscovery),
-                buildFromTaskStatuses(inProgress, readyForTesting),
-                buildFromTaskStatuses(inProgress, canceled)
-        ));
-        readyForTesting.setTaskStatusTransitions(List.of(
-                buildFromTaskStatuses(readyForTesting, inProgress),
-                buildFromTaskStatuses(readyForTesting, testing),
-                buildFromTaskStatuses(readyForTesting, canceled)
-        ));
-        testing.setTaskStatusTransitions(List.of(
-                buildFromTaskStatuses(testing, toDo),
-                buildFromTaskStatuses(testing, readyForTesting),
-                buildFromTaskStatuses(testing, done),
-                buildFromTaskStatuses(testing, canceled)
-        ));
-        story.setTaskStatuses(List.of(toDo, inDiscovery, inProgress, readyForTesting, testing, done, canceled));
+    private void saveStoryTaskType(Project project) {
+        final var story = taskTypeRepository.save(
+                TaskType.builder()
+                        .project(project)
+                        .name("Story")
+                        .build()
+        );
+        final var toDo = saveTaskStatus("To Do", story);
+        final var inDiscovery = saveTaskStatus("In Discovery", story);
+        final var inProgress = saveTaskStatus("In Progress", story);
+        final var readyForTesting = saveTaskStatus("Ready for Testing", story);
+        final var testing = saveTaskStatus("Testing", story);
+        final var done = saveTaskStatus("Done", story);
+        final var canceled = saveTaskStatus("Canceled", story);
 
-        return story;
+        saveTaskStatusTransition(toDo, inDiscovery);
+        saveTaskStatusTransition(toDo, inProgress);
+        saveTaskStatusTransition(toDo, canceled);
+
+
+        saveTaskStatusTransition(inDiscovery, toDo);
+        saveTaskStatusTransition(inDiscovery, inProgress);
+        saveTaskStatusTransition(inDiscovery, canceled);
+
+        saveTaskStatusTransition(inProgress, toDo);
+        saveTaskStatusTransition(inProgress, inDiscovery);
+        saveTaskStatusTransition(inProgress, readyForTesting);
+        saveTaskStatusTransition(inProgress, canceled);
+
+
+        saveTaskStatusTransition(readyForTesting, inProgress);
+        saveTaskStatusTransition(readyForTesting, testing);
+        saveTaskStatusTransition(readyForTesting, canceled);
+
+        saveTaskStatusTransition(testing, toDo);
+        saveTaskStatusTransition(testing, readyForTesting);
+        saveTaskStatusTransition(testing, done);
+        saveTaskStatusTransition(testing, canceled);
     }
 
     // TODO Добавить статусы и переходы
-    private TaskType buildBugTaskType(Project project) {
-        return TaskType.builder()
-                .project(project)
-                .name("Bug")
-                .build();
-    }
-
-    private List<AdditionalFieldValueType> buildSimpleAdditionalFieldValueTypes(Project project) {
-        return List.of(
-                AdditionalFieldValueType.builder()
+    private void saveBugTaskType(Project project) {
+        taskTypeRepository.save(
+                TaskType.builder()
                         .project(project)
-                        .name("int")
-                        .body("int")
-                        .build(),
-                AdditionalFieldValueType.builder()
-                        .project(project)
-                        .name("string")
-                        .body("String")
+                        .name("Bug")
                         .build()
         );
     }
 
-    private TaskStatus buildFromName(String name, TaskType taskType) {
-        return TaskStatus.builder()
-                .taskType(taskType)
-                .name(name)
-                .build();
+    private void saveSimpleAdditionalFieldValueTypes(Project project) {
+        additionalFieldValueTypeRepository.saveAll(
+                List.of(
+                        AdditionalFieldValueType.builder()
+                                .project(project)
+                                .name("int")
+                                .body("int")
+                                .build(),
+                        AdditionalFieldValueType.builder()
+                                .project(project)
+                                .name("string")
+                                .body("String")
+                                .build()
+                )
+        );
     }
 
-    private TaskStatusTransition buildFromTaskStatuses(TaskStatus from, TaskStatus in) {
-        return TaskStatusTransition.builder()
-                .from(from)
-                .in(in)
-                .build();
+    private TaskStatus saveTaskStatus(String name, TaskType taskType) {
+        return taskStatusRepository.save(
+                TaskStatus.builder()
+                        .taskType(taskType)
+                        .name(name)
+                        .build()
+        );
+    }
+
+    private void saveTaskStatusTransition(TaskStatus from, TaskStatus in) {
+        taskStatusTransitionRepository.save(
+                TaskStatusTransition.builder()
+                        .id(
+                                TaskStatusTransition.Id.builder()
+                                        .from(from)
+                                        .in(in)
+                                        .build()
+                        )
+                        .build()
+        );
     }
 }

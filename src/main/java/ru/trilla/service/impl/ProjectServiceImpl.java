@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.trilla.dto.ProjectCreatingRequest;
 import ru.trilla.dto.ProjectDto;
+import ru.trilla.entity.UserAccess;
 import ru.trilla.exception.ResourceAlreadyExistsException;
 import ru.trilla.mapper.ProjectMapper;
 import ru.trilla.repository.ProjectRepository;
+import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.repository.UserRepository;
 import ru.trilla.security.TrillaAuthentication;
 import ru.trilla.service.ProjectFabric;
@@ -23,10 +25,16 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper mapper;
     private final ProjectFabric fabric;
     private final UserRepository userRepository;
+    private final UserAccessRepository userAccessRepository;
 
     @Override
     public List<ProjectDto> findAllForCurrentUser(TrillaAuthentication authentication) {
-        return mapper.toDtoList(repository.findByUserAccessesUserId(authentication.id()));
+        return mapper.toDtoList(
+                userAccessRepository.findByIdUserId(authentication.id()).stream()
+                        .map(UserAccess::getId)
+                        .map(UserAccess.Id::getProject)
+                        .toList()
+        );
     }
 
     @Override
@@ -34,8 +42,9 @@ public class ProjectServiceImpl implements ProjectService {
         if (repository.existsByCode(request.code())) {
             throw new ResourceAlreadyExistsException("Проект с данным кодом уже существует");
         }
-        final var project = fabric.createSimpleProject(userRepository.findById(authentication.id()).orElseThrow());
-        mapper.addCreationRequestProperties(project, request);
-        return mapper.toDto(repository.save(project));
+        return mapper.toDto(fabric.createSimpleProject(
+                request,
+                userRepository.findById(authentication.id()).orElseThrow()
+        ));
     }
 }

@@ -5,9 +5,6 @@
 
     <changeSet author="denis5726" id="1">
         <createTable tableName="task_status_transition">
-            <column name="id" type="UUID">
-                <constraints primaryKey="true" primaryKeyName="task_status_transition_pk"/>
-            </column>
             <column name="from_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -15,6 +12,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addPrimaryKey tableName="task_status_transition" columnNames="from_id,in_id" constraintName="task_status_transition_pk"/>
 
         <addForeignKeyConstraint baseColumnNames="from_id" baseTableName="task_status_transition"
                                  constraintName="task_status_transition_from_id_fkey" deferrable="false"

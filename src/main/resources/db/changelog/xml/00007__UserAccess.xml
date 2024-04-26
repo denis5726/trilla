@@ -5,9 +5,6 @@
 
     <changeSet author="denis5726" id="1">
         <createTable tableName="user_access">
-            <column name="id" type="UUID">
-                <constraints primaryKey="true" primaryKeyName="user_access_pk"/>
-            </column>
             <column name="user_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -19,6 +16,8 @@
             </column>
             <column name="created_at" type="TIMESTAMPTZ"/>
         </createTable>
+
+        <addPrimaryKey tableName="user_access" columnNames="user_id,project_id" constraintName="user_access_pk"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_access"
                                  constraintName="user_access_user_id_fkey" deferrable="false"
