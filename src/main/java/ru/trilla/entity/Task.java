@@ -33,6 +33,7 @@ public class Task {
     private UUID id;
     @Version
     private Integer version;
+    private String code;
     private String summary;
     private String description;
     @ManyToOne

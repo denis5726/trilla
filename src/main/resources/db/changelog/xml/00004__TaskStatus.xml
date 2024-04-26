@@ -11,6 +11,12 @@
             <column name="task_type_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
+            <column name="is_opened" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_initial" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

@@ -71,13 +71,13 @@ public class ProjectFabricImpl implements ProjectFabric {
                         .name("Story")
                         .build()
         );
-        final var toDo = saveTaskStatus("To Do", story);
-        final var inDiscovery = saveTaskStatus("In Discovery", story);
-        final var inProgress = saveTaskStatus("In Progress", story);
-        final var readyForTesting = saveTaskStatus("Ready for Testing", story);
-        final var testing = saveTaskStatus("Testing", story);
-        final var done = saveTaskStatus("Done", story);
-        final var canceled = saveTaskStatus("Canceled", story);
+        final var toDo = saveTaskStatus("To Do", story, true, true);
+        final var inDiscovery = saveTaskStatus("In Discovery", story, true, false);
+        final var inProgress = saveTaskStatus("In Progress", story, true, false);
+        final var readyForTesting = saveTaskStatus("Ready for Testing", story, true, false);
+        final var testing = saveTaskStatus("Testing", story, true, false);
+        final var done = saveTaskStatus("Done", story, false, false);
+        final var canceled = saveTaskStatus("Canceled", story, false, false);
 
         saveTaskStatusTransition(toDo, inDiscovery);
         saveTaskStatusTransition(toDo, inProgress);
@@ -131,11 +131,13 @@ public class ProjectFabricImpl implements ProjectFabric {
         );
     }
 
-    private TaskStatus saveTaskStatus(String name, TaskType taskType) {
+    private TaskStatus saveTaskStatus(String name, TaskType taskType, boolean isOpened, boolean isInitial) {
         return taskStatusRepository.save(
                 TaskStatus.builder()
                         .taskType(taskType)
                         .name(name)
+                        .isOpened(isOpened)
+                        .isInitial(isInitial)
                         .build()
         );
     }

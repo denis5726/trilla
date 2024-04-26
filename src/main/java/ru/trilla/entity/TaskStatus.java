@@ -28,6 +28,8 @@ public class TaskStatus {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+    private Boolean isOpened;
+    private Boolean isInitial;
     @ManyToOne
     @JoinColumn
     private TaskType taskType;
