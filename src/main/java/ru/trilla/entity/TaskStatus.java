@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.audit.MessagingEntityListener;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
 public class TaskStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

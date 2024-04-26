@@ -42,7 +42,7 @@ public class TokenProvider {
     }
 
     public String getToken(TrillaAuthentication authentication) {
-        final var claims = Jwts.claims().setSubject(authentication.id().toString());
+        final var claims = Jwts.claims();
         try {
             claims.put(BODY_KEY, objectMapper.writeValueAsString(authentication));
         } catch (JsonProcessingException e) {

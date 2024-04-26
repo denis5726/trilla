@@ -1,5 +1,6 @@
 package ru.trilla.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import ru.trilla.entity.Role;
@@ -14,26 +15,31 @@ public record TrillaAuthentication(
 ) implements Authentication {
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
     @Override
+    @JsonIgnore
     public Object getCredentials() {
         return null;
     }
 
     @Override
+    @JsonIgnore
     public Object getDetails() {
         return null;
     }
 
     @Override
+    @JsonIgnore
     public Object getPrincipal() {
         return id;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAuthenticated() {
         return true;
     }
@@ -46,6 +52,7 @@ public record TrillaAuthentication(
     }
 
     @Override
+    @JsonIgnore
     public String getName() {
         return id.toString();
     }
@@ -56,6 +63,7 @@ public record TrillaAuthentication(
     ) implements GrantedAuthority {
 
         @Override
+        @JsonIgnore
         public String getAuthority() {
             return projectId + ":" + role;
         }

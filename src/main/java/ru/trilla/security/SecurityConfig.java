@@ -8,6 +8,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -19,7 +21,7 @@ public class SecurityConfig {
     private final TokenConfigurer tokenConfigurer;
 
     @Bean
-    public SecurityFilterChain getSecurityFilterChain(
+    SecurityFilterChain getSecurityFilterChain(
             HttpSecurity httpSecurity,
             CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
@@ -32,9 +34,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/*/swagger-ui/**", "/*/api-docs/**").permitAll()
+                                .requestMatchers("/users/signIn", "/users/signUp").permitAll()
                                 .anyRequest()
-                                //.authenticated() TODO Fix it
-                                .permitAll()
+                                .authenticated()
                 )
                 .apply(tokenConfigurer);
 
@@ -42,7 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(CorsConfiguration corsConfiguration) {
+    CorsConfigurationSource corsConfigurationSource(CorsConfiguration corsConfiguration) {
         var configurationSource = new UrlBasedCorsConfigurationSource();
         configurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return configurationSource;
@@ -50,7 +52,12 @@ public class SecurityConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.security.cors")
-    public CorsConfiguration corsConfiguration() {
+    CorsConfiguration corsConfiguration() {
         return new CorsConfiguration();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
     }
 }

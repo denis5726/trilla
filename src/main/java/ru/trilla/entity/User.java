@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.audit.MessagingEntityListener;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -25,7 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "`user`")
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
