@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
+import ru.trilla.dto.TaskStatusDto;
 import ru.trilla.entity.Project;
 import ru.trilla.entity.Task;
 import ru.trilla.entity.TaskStatus;
@@ -21,9 +22,11 @@ import ru.trilla.repository.TaskTypeRepository;
 import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.security.TrillaAuthentication;
 import ru.trilla.service.TaskService;
+import ru.trilla.service.TaskStatusHelper;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -34,6 +37,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskTypeRepository taskTypeRepository;
     private final UserAccessRepository userAccessRepository;
     private final TaskStatusRepository taskStatusRepository;
+    private final TaskStatusHelper taskStatusHelper;
 
     @Override
     public List<TaskDto> findActualAndAssigneeOnMe(TrillaAuthentication authentication) {
@@ -92,6 +96,17 @@ public class TaskServiceImpl implements TaskService {
         final var assigneeAccess = optionalAssigneeAccess.get();
         task.setAssignee(assigneeAccess.getId().getUser());
         return mapper.toDto(repository.save(task));
+    }
+
+    @Override
+    public List<TaskStatusDto> findPossibleStatusesAfterTransition(UUID taskId) {
+        return taskStatusHelper.findPossibleTransitions(
+                        repository.findById(taskId).orElseThrow(() ->
+                                new DataValidationException("Задача с данным идентификатором не найдена")
+                        ).getTaskStatus()
+                ).stream()
+                .map(taskStatus -> new TaskStatusDto(taskStatus.getId(), taskStatus.getName()))
+                .toList();
     }
 
     private TaskStatus resolveInitialStatusForTaskType(TaskType taskType) {
