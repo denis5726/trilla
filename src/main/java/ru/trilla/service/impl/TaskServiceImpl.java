@@ -8,6 +8,7 @@ import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
+import ru.trilla.dto.TaskStatusUpdatingRequest;
 import ru.trilla.entity.Project;
 import ru.trilla.entity.Task;
 import ru.trilla.entity.TaskStatus;
@@ -45,6 +46,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskStatusDto> findPossibleStatusesAfterTransition(UUID taskId, TrillaAuthentication authentication) {
+        final var task = repository.findById(taskId).orElseThrow(() ->
+                new DataValidationException("Задача с данным идентификатором не найдена")
+        );
+        if (!userAccessRepository.existsByIdUserIdAndIdProjectId(
+                authentication.id(),
+                task.getProject().getId()
+        )) {
+            throw new AuthorizationException("Вы не имеете доступа к этой задаче");
+        }
+        return taskStatusHelper.findPossibleTransitions(
+                        task.getTaskStatus()
+                ).stream()
+                .map(taskStatus -> new TaskStatusDto(taskStatus.getId(), taskStatus.getName()))
+                .toList();
+    }
+
+    @Override
     @Transactional
     public TaskDto create(TaskCreatingRequest request, TrillaAuthentication authentication) {
         final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow(() ->
@@ -73,6 +92,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication) {
         final var optionalTask = repository.findById(request.taskId());
         if (optionalTask.isEmpty()) {
@@ -99,14 +119,27 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskStatusDto> findPossibleStatusesAfterTransition(UUID taskId) {
-        return taskStatusHelper.findPossibleTransitions(
-                        repository.findById(taskId).orElseThrow(() ->
-                                new DataValidationException("Задача с данным идентификатором не найдена")
-                        ).getTaskStatus()
-                ).stream()
-                .map(taskStatus -> new TaskStatusDto(taskStatus.getId(), taskStatus.getName()))
-                .toList();
+    @Transactional
+    public TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
+        final var task = repository.findById(request.taskId()).orElseThrow(() ->
+                new DataValidationException("Задача с данным идентификатором не существует")
+        );
+        if (!userAccessRepository.existsByIdUserIdAndIdProjectId(
+                authentication.id(), task.getProject().getId()
+        )) {
+            throw new AuthorizationException("Вы не имеете доступа к этой задаче");
+        }
+        final var newTaskStatus = taskStatusRepository.findById(request.newTaskStatusId()).orElseThrow(() ->
+                new DataValidationException("Статус с данным идентификатором не найден")
+        );
+        if (
+                taskStatusHelper.findPossibleTransitions(task.getTaskStatus()).stream()
+                        .noneMatch(taskStatus -> Objects.equals(newTaskStatus.getId(), taskStatus.getId()))
+        ) {
+            throw new DataValidationException("Переход в данный статус невозможен при текущем статусе задачи");
+        }
+        task.setTaskStatus(newTaskStatus);
+        return mapper.toDto(repository.save(task));
     }
 
     private TaskStatus resolveInitialStatusForTaskType(TaskType taskType) {

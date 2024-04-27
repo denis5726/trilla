@@ -12,6 +12,7 @@ import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
+import ru.trilla.dto.TaskStatusUpdatingRequest;
 import ru.trilla.security.TrillaAuthentication;
 import ru.trilla.service.TaskService;
 
@@ -30,8 +31,11 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}/possibleStatuses")
-    public List<TaskStatusDto> findPossibleStatusesAfterTransition(@PathVariable UUID taskId) {
-        return service.findPossibleStatusesAfterTransition(taskId);
+    public List<TaskStatusDto> findPossibleStatusesAfterTransition(
+            @PathVariable UUID taskId,
+            TrillaAuthentication authentication
+    ) {
+        return service.findPossibleStatusesAfterTransition(taskId, authentication);
     }
 
     @PostMapping
@@ -42,5 +46,10 @@ public class TaskController {
     @PatchMapping("/assign")
     public TaskDto assignUser(@RequestBody TaskAssigningRequest request, TrillaAuthentication authentication) {
         return service.assigneeUser(request, authentication);
+    }
+
+    @PatchMapping("/status")
+    public TaskDto updateStatus(@RequestBody TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
+        return service.updateStatus(request, authentication);
     }
 }
