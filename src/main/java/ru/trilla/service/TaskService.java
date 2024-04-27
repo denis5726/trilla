@@ -1,5 +1,6 @@
 package ru.trilla.service;
 
+import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.security.TrillaAuthentication;
@@ -11,4 +12,6 @@ public interface TaskService {
     List<TaskDto> findActualAndAssigneeOnMe(TrillaAuthentication authentication);
 
     TaskDto create(TaskCreatingRequest request, TrillaAuthentication authentication);
+
+    TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication);
 }

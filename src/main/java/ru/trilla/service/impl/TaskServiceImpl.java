@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.entity.Project;
@@ -65,6 +66,32 @@ public class TaskServiceImpl implements TaskService {
                         .description(request.description())
                         .build()
         ));
+    }
+
+    @Override
+    public TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication) {
+        final var optionalTask = repository.findById(request.taskId());
+        if (optionalTask.isEmpty()) {
+            throw new DataValidationException("Задача с данным идентификатором не найдена");
+        }
+        final var task = optionalTask.get();
+        final var project = task.getProject();
+        final var optionalAssigneeAccess = userAccessRepository.findByIdUserIdAndIdProjectId(
+                request.userId(),
+                project.getId()
+        );
+        if (optionalAssigneeAccess.isEmpty()) {
+            throw new DataValidationException("Пользователь не имеет доступа к проекту");
+        }
+        if (!userAccessRepository.existsByIdUserIdAndIdProjectId(
+                authentication.id(),
+                project.getId()
+        )) {
+            throw new AuthorizationException("Вы не имеете доступа к данной задаче");
+        }
+        final var assigneeAccess = optionalAssigneeAccess.get();
+        task.setAssignee(assigneeAccess.getId().getUser());
+        return mapper.toDto(repository.save(task));
     }
 
     private TaskStatus resolveInitialStatusForTaskType(TaskType taskType) {
