@@ -9,6 +9,7 @@ import ru.trilla.dto.UserAccessDeletingRequest;
 import ru.trilla.dto.UserAccessDto;
 import ru.trilla.entity.Role;
 import ru.trilla.entity.UserAccess;
+import ru.trilla.exception.AuthorizationException;
 import ru.trilla.exception.DataValidationException;
 import ru.trilla.mapper.UserAccessMapper;
 import ru.trilla.repository.ProjectRepository;
@@ -19,6 +20,7 @@ import ru.trilla.service.UserAccessAuthorizer;
 import ru.trilla.service.UserAccessService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -45,6 +47,7 @@ public class UserAccessServiceImpl implements UserAccessService {
     @Override
     @Transactional
     public UserAccessDto createUserAccess(UserAccessCreatingRequest request, TrillaAuthentication authentication) {
+        checkSelfChanging(request.userId(), authentication);
         final var user = userRepository.findById(request.userId()).orElseThrow(() ->
                 new DataValidationException("Пользователь с данным идентификатором не найден")
         );
@@ -68,6 +71,7 @@ public class UserAccessServiceImpl implements UserAccessService {
     @Override
     @Transactional
     public void deleteUserAccess(UserAccessDeletingRequest request, TrillaAuthentication authentication) {
+        checkSelfChanging(request.userId(), authentication);
         authorizer.checkAccess(
                 authentication.id(),
                 projectRepository.findById(request.projectId()).orElseThrow(() ->
@@ -76,5 +80,11 @@ public class UserAccessServiceImpl implements UserAccessService {
                 Role.ADMIN
         );
         repository.deleteByIdUserIdAndIdProjectId(request.userId(), request.projectId());
+    }
+
+    private void checkSelfChanging(UUID userId, TrillaAuthentication authentication) {
+        if (Objects.equals(authentication.id(), userId)) {
+            throw new AuthorizationException("Невозможно изменить свой доступ на проект");
+        }
     }
 }
