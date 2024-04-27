@@ -12,11 +12,10 @@
     <include file="xml/00009__LinkType.xml" relativeToChangelogFile="true"/>
     <include file="xml/00010__Link.xml" relativeToChangelogFile="true"/>
     <include file="xml/00011__Comment.xml" relativeToChangelogFile="true"/>
-    <include file="xml/00012__AdditionalFieldValueType.xml" relativeToChangelogFile="true"/>
-    <include file="xml/00013__AdditionalFieldType.xml" relativeToChangelogFile="true"/>
-    <include file="xml/00014__AdditionalField.xml" relativeToChangelogFile="true"/>
-    <include file="xml/00015__Attachment.xml" relativeToChangelogFile="true"/>
-    <include file="xml/00016__TaskFilter.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00012__AdditionalFieldType.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00013__AdditionalField.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00014__Attachment.xml" relativeToChangelogFile="true"/>
+    <include file="xml/00015__TaskFilter.xml" relativeToChangelogFile="true"/>
 
     <include file="dev/00001__Data.xml" context="!prom" relativeToChangelogFile="true"/>
 

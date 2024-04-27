@@ -8,7 +8,7 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" primaryKeyName="additional_field_type_pkey"/>
             </column>
-            <column name="additional_field_value_type_id" type="UUID">
+            <column name="type" type="VARCHAR(30)">
                 <constraints nullable="false"/>
             </column>
             <column name="task_type_id" type="UUID">
@@ -23,11 +23,5 @@
                                  constraintName="additional_field_type_task_type_id_fkey" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="task_type"/>
-
-        <addForeignKeyConstraint baseColumnNames="additional_field_value_type_id" baseTableName="additional_field_type"
-                                 constraintName="additional_field_type_additional_field_value_type_id_fkey"
-                                 deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="additional_field_value_type"/>
     </changeSet>
 </databaseChangeLog>

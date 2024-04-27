@@ -2,6 +2,8 @@ package ru.trilla.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,9 +31,8 @@ public class AdditionalFieldType {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    @ManyToOne
-    @JoinColumn
-    private AdditionalFieldValueType additionalFieldValueType;
+    @Enumerated(EnumType.STRING)
+    private AdditionalFieldValueType type;
     @ManyToOne
     @JoinColumn
     private TaskType taskType;

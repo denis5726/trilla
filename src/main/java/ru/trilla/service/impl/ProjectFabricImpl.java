@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.trilla.dto.ProjectCreatingRequest;
-import ru.trilla.entity.AdditionalFieldValueType;
 import ru.trilla.entity.Project;
 import ru.trilla.entity.Role;
 import ru.trilla.entity.TaskStatus;
@@ -12,15 +11,12 @@ import ru.trilla.entity.TaskStatusTransition;
 import ru.trilla.entity.TaskType;
 import ru.trilla.entity.User;
 import ru.trilla.entity.UserAccess;
-import ru.trilla.repository.AdditionalFieldValueTypeRepository;
 import ru.trilla.repository.ProjectRepository;
 import ru.trilla.repository.TaskStatusRepository;
 import ru.trilla.repository.TaskStatusTransitionRepository;
 import ru.trilla.repository.TaskTypeRepository;
 import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.service.ProjectFabric;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +26,6 @@ public class ProjectFabricImpl implements ProjectFabric {
     private final TaskTypeRepository taskTypeRepository;
     private final TaskStatusRepository taskStatusRepository;
     private final TaskStatusTransitionRepository taskStatusTransitionRepository;
-    private final AdditionalFieldValueTypeRepository additionalFieldValueTypeRepository;
 
     @Override
     @Transactional
@@ -53,7 +48,6 @@ public class ProjectFabricImpl implements ProjectFabric {
                         .build()
         );
 
-        saveSimpleAdditionalFieldValueTypes(project);
         saveSimpleProjectTaskTypes(project);
 
         return project;
@@ -111,23 +105,6 @@ public class ProjectFabricImpl implements ProjectFabric {
                         .project(project)
                         .name("Bug")
                         .build()
-        );
-    }
-
-    private void saveSimpleAdditionalFieldValueTypes(Project project) {
-        additionalFieldValueTypeRepository.saveAll(
-                List.of(
-                        AdditionalFieldValueType.builder()
-                                .project(project)
-                                .name("int")
-                                .body("int")
-                                .build(),
-                        AdditionalFieldValueType.builder()
-                                .project(project)
-                                .name("string")
-                                .body("String")
-                                .build()
-                )
         );
     }
 
