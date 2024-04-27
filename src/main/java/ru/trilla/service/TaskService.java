@@ -21,4 +21,6 @@ public interface TaskService {
     TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication);
 
     TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication);
+
+    TaskDto update(UUID taskId, TaskCreatingRequest request, TrillaAuthentication authentication);
 }

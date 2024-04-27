@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.trilla.entity.TaskStatus;
 import ru.trilla.entity.TaskStatusTransition;
+import ru.trilla.entity.TaskType;
+import ru.trilla.repository.TaskStatusRepository;
 import ru.trilla.repository.TaskStatusTransitionRepository;
 import ru.trilla.service.TaskStatusHelper;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TaskStatusHelperImpl implements TaskStatusHelper {
+    private final TaskStatusRepository repository;
     private final TaskStatusTransitionRepository taskStatusTransitionRepository;
 
     @Override
@@ -22,5 +25,10 @@ public class TaskStatusHelperImpl implements TaskStatusHelper {
                 .map(TaskStatusTransition::getId)
                 .map(TaskStatusTransition.Id::getIn)
                 .toList();
+    }
+
+    @Override
+    public TaskStatus resolveInitialStatusForTaskType(TaskType taskType) {
+        return repository.findByTaskTypeAndIsInitial(taskType, true).orElseThrow();
     }
 }

@@ -52,4 +52,13 @@ public class TaskController {
     public TaskDto updateStatus(@RequestBody TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
         return service.updateStatus(request, authentication);
     }
+
+    @PatchMapping("/{taskId}")
+    public TaskDto update(
+            @PathVariable UUID taskId,
+            @RequestBody TaskCreatingRequest request,
+            TrillaAuthentication authentication
+    ) {
+        return service.update(taskId, request, authentication);
+    }
 }
