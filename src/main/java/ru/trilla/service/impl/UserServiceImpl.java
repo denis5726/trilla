@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto signUp(SignUpRequest request) {
         if (repository.existsByEmail(request.email())) {
+            log.info("Attempt to register user with existent email: {}", request.email());
             throw new ResourceAlreadyExistsException("Пользователь с данной почтой уже существует");
         }
         final var user = mapper.toEntity(request);
@@ -42,12 +43,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String signIn(SignInRequest request) {
-        final var optionalUser = repository.findByEmail(request.email());
-        if (optionalUser.isEmpty()) {
-            throw new DataValidationException("Пользователь с данным email не найден");
-        }
-        final var user = optionalUser.get();
+        final var user = repository.findByEmail(request.email()).orElseThrow(() -> {
+            log.info("Attempt to login with non existent user (email={})", request.email());
+            return new DataValidationException("Пользователь с данным email не найден");
+        });
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            log.info("Attempt to login with wrong password");
             throw new AuthenticationException("Пароль не подходит");
         }
         return tokenProvider.getToken(new TrillaAuthentication(

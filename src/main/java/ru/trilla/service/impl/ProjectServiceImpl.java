@@ -40,6 +40,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDto create(ProjectCreatingRequest request, TrillaAuthentication authentication) {
         if (repository.existsByCode(request.code())) {
+            log.info("Attempt to create project with existent code: {}", request.code());
             throw new ResourceAlreadyExistsException("Проект с данным кодом уже существует");
         }
         return mapper.toDto(fabric.createSimpleProject(
