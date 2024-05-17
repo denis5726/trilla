@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.aop.LocalizedEntityName;
 import ru.trilla.audit.MessagingEntityListener;
 
 import java.time.ZonedDateTime;
@@ -25,6 +26,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
+@LocalizedEntityName("Доступ пользователя")
 public class UserAccess {
     @EmbeddedId
     private Id id;

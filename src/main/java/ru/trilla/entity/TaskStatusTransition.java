@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.aop.LocalizedEntityName;
 import ru.trilla.audit.MessagingEntityListener;
 
 @Entity
@@ -21,6 +22,7 @@ import ru.trilla.audit.MessagingEntityListener;
 @AllArgsConstructor
 @Builder
 @EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
+@LocalizedEntityName("Переход между статусами задач")
 public class TaskStatusTransition {
     @EmbeddedId
     private Id id;

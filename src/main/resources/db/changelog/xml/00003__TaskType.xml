@@ -16,9 +16,12 @@
             </column>
         </createTable>
 
+        <addUniqueConstraint tableName="task_type" columnNames="name,project_id" constraintName="task_type_uq_name_project_id"/>
+
         <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="task_type"
                                  constraintName="task_type_project_id_fkey" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="project"/>
+
     </changeSet>
 </databaseChangeLog>

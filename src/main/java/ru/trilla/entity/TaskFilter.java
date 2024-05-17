@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.aop.LocalizedEntityName;
 import ru.trilla.audit.MessagingEntityListener;
 
 import java.util.UUID;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
+@LocalizedEntityName("Фильтр задач")
 public class TaskFilter {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

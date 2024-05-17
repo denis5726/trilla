@@ -19,7 +19,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="link_type" columnNames="in_id,from_id"/>
+        <addUniqueConstraint tableName="link_type" columnNames="in_id,from_id" constraintName="link_type_uq_in_id_from_id"/>
 
         <addForeignKeyConstraint baseColumnNames="from_id" baseTableName="link_type"
                                  constraintName="link_type_from_id_fkey" deferrable="false"

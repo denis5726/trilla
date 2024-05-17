@@ -16,6 +16,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ru.trilla.aop.LocalizedEntityName;
 import ru.trilla.audit.MessagingEntityListener;
 
 import java.time.ZonedDateTime;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @EntityListeners({AuditingEntityListener.class, MessagingEntityListener.class})
+@LocalizedEntityName("Задача")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

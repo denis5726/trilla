@@ -12,8 +12,8 @@ public interface TaskMapper {
 
     @Mapping(target = "type", source = "taskType.name")
     @Mapping(target = "status", source = "taskStatus.name")
-    @Mapping(target = "assigneeLastName", source = "assignee.lastName")
-    @Mapping(target = "assigneeFirstName", source = "assignee.firstName")
+    @Mapping(target = "assigneeInfo.lastName", source = "assignee.lastName")
+    @Mapping(target = "assigneeInfo.firstName", source = "assignee.firstName")
     TaskDto toDto(Task task);
 
     List<TaskDto> toDtoList(List<Task> tasks);
