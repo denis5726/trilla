@@ -31,7 +31,6 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
-    private static final String TASK_NOT_FOUND_MESSAGE = "Задача с данным идентификатором не найдена";
     private final TaskRepository repository;
     private final TaskMapper mapper;
     private final TaskTypeRepository taskTypeRepository;
@@ -47,13 +46,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskStatusDto> findPossibleStatusesAfterTransition(UUID taskId, TrillaAuthentication authentication) {
-        final var task = repository.findById(taskId).orElseThrow(() -> {
-            log.info("Attempt to find possible statuses after transition for non existent taskId={}", taskId);
-            return new DataValidationException(TASK_NOT_FOUND_MESSAGE);
-        });
-
+        final var task = repository.findById(taskId).orElseThrow();
         userAccessAuthorizer.checkAccess(authentication.id(), task);
-
         return taskStatusHelper.findPossibleTransitions(
                         task.getTaskStatus()
                 ).stream()
@@ -64,10 +58,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskDto create(TaskCreatingRequest request, TrillaAuthentication authentication) {
-        final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow(() -> {
-            log.info("Attempt to create task with non existent taskTypeId={}", request.taskTypeId());
-            return new DataValidationException("Тип задачи с заданным идентификатором не найден");
-        });
+        final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow();
 
         userAccessAuthorizer.checkAccess(authentication.id(), taskType.getProject());
 
@@ -87,17 +78,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication) {
-        final var task = repository.findById(request.taskId()).orElseThrow(() -> {
-            log.info("Attempt to assign task with non existent taskId={}", request.taskId());
-            return new DataValidationException(TASK_NOT_FOUND_MESSAGE);
-        });
+        final var task = repository.findById(request.taskId()).orElseThrow();
         final var project = task.getProject();
-        task.setAssignee(
-                userRepository.findById(request.userId()).orElseThrow(() -> {
-                    log.info("Attempt to assign task on non existent user (id={})", request.userId());
-                    return new DataValidationException("Пользователь с указанным идентификатором не найден");
-                })
-        );
+        task.setAssignee(userRepository.findById(request.userId()).orElseThrow());
         userAccessAuthorizer.checkAccess(authentication.id(), task);
         userAccessAuthorizer.checkAccess(request.userId(), project, "Пользователь не имеет доступа к проекту");
 
@@ -107,15 +90,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
-        final var task = repository.findById(request.taskId()).orElseThrow(() -> {
-            log.info("Attempt to update status in non existent task (id={})", request.taskId());
-            return new DataValidationException(TASK_NOT_FOUND_MESSAGE);
-        });
+        final var task = repository.findById(request.taskId()).orElseThrow();
         userAccessAuthorizer.checkAccess(authentication.id(), task);
-        final var newTaskStatus = taskStatusRepository.findById(request.newTaskStatusId()).orElseThrow(() -> {
-            log.info("Attempt to update task status to non existent status (id={})", request.newTaskStatusId());
-            return new DataValidationException("Статус с данным идентификатором не найден");
-        });
+        final var newTaskStatus = taskStatusRepository.findById(request.newTaskStatusId()).orElseThrow();
         if (
                 taskStatusHelper.findPossibleTransitions(task.getTaskStatus()).stream()
                         .noneMatch(taskStatus -> Objects.equals(newTaskStatus.getId(), taskStatus.getId()))
@@ -129,16 +106,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto update(UUID taskId, TaskCreatingRequest request, TrillaAuthentication authentication) {
-        final var task = repository.findById(taskId).orElseThrow(() -> {
-            log.info("Attempt to update non existent task (id={})", taskId);
-            return new DataValidationException(TASK_NOT_FOUND_MESSAGE);
-        });
+        final var task = repository.findById(taskId).orElseThrow();
         userAccessAuthorizer.checkAccess(authentication.id(), task);
         if (!Objects.equals(task.getTaskType().getId(), request.taskTypeId())) {
-            final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow(() -> {
-                log.info("Attempt to update task to non existent task status (id={})", request.taskTypeId());
-                return new DataValidationException("Тип задачи с заданным идентификатором не найден");
-            });
+            final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow();
             task.setTaskType(taskType);
             task.setTaskStatus(taskStatusHelper.resolveInitialStatusForTaskType(taskType));
         }

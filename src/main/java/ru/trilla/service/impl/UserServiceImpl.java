@@ -10,7 +10,6 @@ import ru.trilla.dto.UserDto;
 import ru.trilla.entity.User;
 import ru.trilla.exception.AuthenticationException;
 import ru.trilla.exception.DataValidationException;
-import ru.trilla.exception.ResourceAlreadyExistsException;
 import ru.trilla.mapper.UserMapper;
 import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.repository.UserRepository;
@@ -32,10 +31,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto signUp(SignUpRequest request) {
-        if (repository.existsByEmail(request.email())) {
-            log.info("Attempt to register user with existent email: {}", request.email());
-            throw new ResourceAlreadyExistsException("Пользователь с данной почтой уже существует");
-        }
         final var user = mapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         return mapper.toDto(repository.save(user));

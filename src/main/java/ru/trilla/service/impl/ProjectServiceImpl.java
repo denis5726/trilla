@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.trilla.dto.ProjectCreatingRequest;
 import ru.trilla.dto.ProjectDto;
 import ru.trilla.entity.UserAccess;
-import ru.trilla.exception.ResourceAlreadyExistsException;
 import ru.trilla.mapper.ProjectMapper;
-import ru.trilla.repository.ProjectRepository;
 import ru.trilla.repository.UserAccessRepository;
 import ru.trilla.repository.UserRepository;
 import ru.trilla.security.TrillaAuthentication;
@@ -21,7 +19,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
-    private final ProjectRepository repository;
     private final ProjectMapper mapper;
     private final ProjectFabric fabric;
     private final UserRepository userRepository;
@@ -39,10 +36,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto create(ProjectCreatingRequest request, TrillaAuthentication authentication) {
-        if (repository.existsByCode(request.code())) {
-            log.info("Attempt to create project with existent code: {}", request.code());
-            throw new ResourceAlreadyExistsException("Проект с данным кодом уже существует");
-        }
         return mapper.toDto(fabric.createSimpleProject(
                 request,
                 userRepository.findById(authentication.id()).orElseThrow()

@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.trilla.aop.LocalizedEntityName;
+import ru.trilla.aop.UniqueField;
 import ru.trilla.audit.MessagingEntityListener;
 
 import java.time.ZonedDateTime;
@@ -35,6 +36,7 @@ public class User {
     private UUID id;
     @Version
     private Integer version;
+    @UniqueField
     private String email;
     private String firstName;
     private String lastName;

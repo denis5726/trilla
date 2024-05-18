@@ -31,11 +31,11 @@ services:
 #      KAFKA_CREATE_TOPICS: "TOPIC:1:1"
   postgres:
     image: postgres:15
-    container_name: 'osum-postgres'
+    container_name: 'trilla-postgres'
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_DB: "osum"
+      POSTGRES_DB: "trilla"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       PG_DATA: /var/lib/postgresql/data/db-files

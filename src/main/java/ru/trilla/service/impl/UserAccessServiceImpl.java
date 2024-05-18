@@ -10,7 +10,6 @@ import ru.trilla.dto.UserAccessDto;
 import ru.trilla.entity.Role;
 import ru.trilla.entity.UserAccess;
 import ru.trilla.exception.AuthorizationException;
-import ru.trilla.exception.DataValidationException;
 import ru.trilla.mapper.UserAccessMapper;
 import ru.trilla.repository.ProjectRepository;
 import ru.trilla.repository.UserAccessRepository;
@@ -48,14 +47,8 @@ public class UserAccessServiceImpl implements UserAccessService {
     @Transactional
     public UserAccessDto createUserAccess(UserAccessCreatingRequest request, TrillaAuthentication authentication) {
         checkSelfChanging(request.userId(), authentication);
-        final var user = userRepository.findById(request.userId()).orElseThrow(() -> {
-            log.info("Attempt to create access with non existent user (id={})", request.userId());
-            return new DataValidationException("Пользователь с данным идентификатором не найден");
-        });
-        final var project = projectRepository.findById(request.projectId()).orElseThrow(() -> {
-            log.info("Attempt to create access with non existent project (id={})", request.projectId());
-            return new DataValidationException("Проект с указанным идентификатором не найден");
-        });
+        final var user = userRepository.findById(request.userId()).orElseThrow();
+        final var project = projectRepository.findById(request.projectId()).orElseThrow();
         authorizer.checkAccess(authentication.id(), project, Role.ADMIN);
         return mapper.toDto(repository.save(
                 UserAccess.builder()
@@ -76,10 +69,7 @@ public class UserAccessServiceImpl implements UserAccessService {
         checkSelfChanging(request.userId(), authentication);
         authorizer.checkAccess(
                 authentication.id(),
-                projectRepository.findById(request.projectId()).orElseThrow(() -> {
-                    log.info("Attempt to delete access in non existent project (id={})", request.projectId());
-                    return new DataValidationException("Проект с данным идентификатором не найден");
-                }),
+                projectRepository.findById(request.projectId()).orElseThrow(),
                 Role.ADMIN
         );
         repository.deleteByIdUserIdAndIdProjectId(request.userId(), request.projectId());

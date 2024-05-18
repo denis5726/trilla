@@ -37,10 +37,7 @@ public class TaskTypeServiceImpl implements TaskTypeService {
 
     @Override
     public TaskTypeDto create(TaskTypeCreatingRequest request, TrillaAuthentication authentication) {
-        final var project = projectRepository.findById(request.projectId()).orElseThrow(() -> {
-            log.info("Attempt to create task type with non-existent project (id={})", request.projectId());
-            return new DataValidationException("Проект с данным идентификатором не найден");
-        });
+        final var project = projectRepository.findById(request.projectId()).orElseThrow();
         authorizer.checkAccess(authentication.id(), project);
         checkNameIdentity(request.name(), project);
         return mapper.toDto(repository.save(
@@ -53,10 +50,7 @@ public class TaskTypeServiceImpl implements TaskTypeService {
 
     @Override
     public TaskTypeDto updateName(TaskTypeUpdatingRequest request, TrillaAuthentication authentication) {
-        final var taskType = repository.findById(request.id()).orElseThrow(() -> {
-            log.info("Attempt to update non-existent task type (id={})", request.id());
-            return new DataValidationException("Тип задачи с данным идентификатором не найден");
-        });
+        final var taskType = repository.findById(request.id()).orElseThrow();
         authorizer.checkAccess(authentication.id(), taskType.getProject());
         checkNameIdentity(request.name(), taskType.getProject());
         taskType.setName(request.name());
@@ -65,10 +59,12 @@ public class TaskTypeServiceImpl implements TaskTypeService {
 
     @Override
     public void deleteById(UUID taskTypeId, TrillaAuthentication authentication) {
-        final var taskType = repository.findById(taskTypeId).orElseThrow(() -> {
-            log.info("Attempt to update non-existent task type (id={})", taskTypeId);
-            return new DataValidationException("Тип задачи с данным идентификатором не найден");
-        });
+        final var taskType = repository.findById(taskTypeId).orElseThrow();
+        if (taskRepository.existsByTaskType(taskType)) {
+            log.info("Attempt to delete task type (id={}) with tasks", taskTypeId);
+            throw new DataValidationException("Невозможно удалить тип задачи, так как есть задачи принадлежащие к нему");
+        }
+        repository.delete(taskType);
     }
 
     private void checkNameIdentity(String name, Project project) {
