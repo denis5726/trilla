@@ -1,6 +1,7 @@
 package ru.trilla.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,5 +61,10 @@ public class TaskController {
             TrillaAuthentication authentication
     ) {
         return service.update(taskId, request, authentication);
+    }
+
+    @DeleteMapping("/{taskId}")
+    public void deleteById(@PathVariable UUID taskId, TrillaAuthentication authentication) {
+        service.deleteById(taskId, authentication);
     }
 }

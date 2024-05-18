@@ -23,4 +23,6 @@ public interface TaskService {
     TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication);
 
     TaskDto update(UUID taskId, TaskCreatingRequest request, TrillaAuthentication authentication);
+
+    void deleteById(UUID taskId, TrillaAuthentication authentication);
 }

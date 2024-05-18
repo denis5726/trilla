@@ -36,6 +36,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn
     private User author;
+    @ManyToOne
+    @JoinColumn
+    private Task task;
     @CreatedDate
     private ZonedDateTime createdAt;
 }

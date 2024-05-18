@@ -10,6 +10,7 @@ import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
 import ru.trilla.dto.TaskStatusUpdatingRequest;
 import ru.trilla.entity.Project;
+import ru.trilla.entity.Role;
 import ru.trilla.entity.Task;
 import ru.trilla.exception.DataValidationException;
 import ru.trilla.exception.TrillaException;
@@ -116,6 +117,13 @@ public class TaskServiceImpl implements TaskService {
         task.setSummary(request.summary());
         task.setDescription(request.description());
         return mapper.toDto(repository.save(task));
+    }
+
+    @Override
+    public void deleteById(UUID taskId, TrillaAuthentication authentication) {
+        final var task = repository.findById(taskId).orElseThrow();
+        userAccessAuthorizer.checkAccess(authentication.id(), task.getProject(), Role.ADMIN);
+        repository.delete(task);
     }
 
     private String generateCode(Project project) {
