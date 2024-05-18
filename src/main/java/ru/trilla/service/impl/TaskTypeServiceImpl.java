@@ -3,6 +3,7 @@ package ru.trilla.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.trilla.dto.TaskTypeCreatingRequest;
 import ru.trilla.dto.TaskTypeDto;
 import ru.trilla.dto.TaskTypeUpdatingRequest;
@@ -36,6 +37,7 @@ public class TaskTypeServiceImpl implements TaskTypeService {
     }
 
     @Override
+    @Transactional
     public TaskTypeDto create(TaskTypeCreatingRequest request, TrillaAuthentication authentication) {
         final var project = projectRepository.findById(request.projectId()).orElseThrow();
         authorizer.checkAccess(authentication.id(), project);
@@ -49,6 +51,7 @@ public class TaskTypeServiceImpl implements TaskTypeService {
     }
 
     @Override
+    @Transactional
     public TaskTypeDto updateName(TaskTypeUpdatingRequest request, TrillaAuthentication authentication) {
         final var taskType = repository.findById(request.id()).orElseThrow();
         authorizer.checkAccess(authentication.id(), taskType.getProject());
@@ -58,6 +61,7 @@ public class TaskTypeServiceImpl implements TaskTypeService {
     }
 
     @Override
+    @Transactional
     public void deleteById(UUID taskTypeId, TrillaAuthentication authentication) {
         final var taskType = repository.findById(taskTypeId).orElseThrow();
         if (taskRepository.existsByTaskType(taskType)) {

@@ -13,7 +13,7 @@ import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
-import ru.trilla.dto.TaskStatusUpdatingRequest;
+import ru.trilla.dto.TaskStatusTransitionRequest;
 import ru.trilla.security.TrillaAuthentication;
 import ru.trilla.service.TaskService;
 
@@ -50,7 +50,7 @@ public class TaskController {
     }
 
     @PatchMapping("/status")
-    public TaskDto updateStatus(@RequestBody TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
+    public TaskDto updateStatus(@RequestBody TaskStatusTransitionRequest request, TrillaAuthentication authentication) {
         return service.updateStatus(request, authentication);
     }
 

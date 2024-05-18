@@ -4,7 +4,7 @@ import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
-import ru.trilla.dto.TaskStatusUpdatingRequest;
+import ru.trilla.dto.TaskStatusTransitionRequest;
 import ru.trilla.security.TrillaAuthentication;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface TaskService {
 
     TaskDto assigneeUser(TaskAssigningRequest request, TrillaAuthentication authentication);
 
-    TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication);
+    TaskDto updateStatus(TaskStatusTransitionRequest request, TrillaAuthentication authentication);
 
     TaskDto update(UUID taskId, TaskCreatingRequest request, TrillaAuthentication authentication);
 

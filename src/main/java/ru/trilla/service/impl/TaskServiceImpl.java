@@ -8,7 +8,7 @@ import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
 import ru.trilla.dto.TaskStatusDto;
-import ru.trilla.dto.TaskStatusUpdatingRequest;
+import ru.trilla.dto.TaskStatusTransitionRequest;
 import ru.trilla.entity.Project;
 import ru.trilla.entity.Role;
 import ru.trilla.entity.Task;
@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public TaskDto updateStatus(TaskStatusUpdatingRequest request, TrillaAuthentication authentication) {
+    public TaskDto updateStatus(TaskStatusTransitionRequest request, TrillaAuthentication authentication) {
         final var task = repository.findById(request.taskId()).orElseThrow();
         userAccessAuthorizer.checkAccess(authentication.id(), task);
         final var newTaskStatus = taskStatusRepository.findById(request.newTaskStatusId()).orElseThrow();

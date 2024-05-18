@@ -5,9 +5,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.util.UUID;
 
-public record TaskStatusUpdatingRequest(
-        @NotNull(message = "Поле обязательно к заполнению")
-        UUID id,
+public record TaskStatusCreatingRequest(
         @NotNull(message = "Поле обязательно к заполнению")
         @Length(min = 3, max = 255, message = "Длина поля должна быть от 3 до 255 символов")
         String name,
