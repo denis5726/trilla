@@ -45,6 +45,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         final var taskType = taskTypeRepository.findById(request.taskTypeId()).orElseThrow();
         authorizer.checkAccess(authentication.id(), taskType.getProject(), Role.ADMIN);
         final var taskStatus = mapper.toEntity(request);
+        taskStatus.setTaskType(taskType);
         checkStatusMutation(taskStatus, taskType);
         return mapper.toDto(repository.save(taskStatus));
     }

@@ -1,5 +1,6 @@
 package ru.trilla.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.trilla.config.OpenApiDefinition;
 import ru.trilla.dto.UserAccessCreatingRequest;
 import ru.trilla.dto.UserAccessDeletingRequest;
 import ru.trilla.dto.UserAccessDto;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@SecurityRequirement(name = OpenApiDefinition.MAIN_SECURITY_SCHEME)
 @RequestMapping("/accesses")
 @RequiredArgsConstructor
 public class UserAccessController {

@@ -33,7 +33,7 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                                 .requestMatchers("/error").permitAll()
-                                .requestMatchers("/*/swagger-ui/**", "/*/api-docs/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/*/api-docs/**", "/swagger-ui.html", "/*/doc/**").permitAll()
                                 .requestMatchers("/users/signIn", "/users/signUp").permitAll()
                                 .anyRequest()
                                 .authenticated()

@@ -1,5 +1,6 @@
 package ru.trilla.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.trilla.config.OpenApiDefinition;
 import ru.trilla.dto.TaskAssigningRequest;
 import ru.trilla.dto.TaskCreatingRequest;
 import ru.trilla.dto.TaskDto;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@SecurityRequirement(name = OpenApiDefinition.MAIN_SECURITY_SCHEME)
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
 public class TaskController {
