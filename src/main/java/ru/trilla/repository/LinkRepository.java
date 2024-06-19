@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface LinkRepository extends JpaRepository<Link, UUID> {
 
-    void deleteByLinkType(LinkType linkType);
+    void deleteByIdLinkType(LinkType linkType);
 }

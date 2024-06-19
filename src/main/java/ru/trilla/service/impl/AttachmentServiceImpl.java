@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class AttachmentServiceImpl implements AttachmentService {
-    private static final String URL_PATTERN = "/attachments/%s";
+    private static final String URL_PATTERN = "%s-%s";
     private final AttachmentRepository repository;
     private final FileLoadingService fileLoadingService;
     private final UserAccessAuthorizer userAccessAuthorizer;
@@ -39,11 +39,12 @@ public class AttachmentServiceImpl implements AttachmentService {
         userAccessAuthorizer.checkAccess(authentication.id(), task);
 
         try {
-            final var url = String.format(URL_PATTERN, UUID.randomUUID());
+            final var url = String.format(URL_PATTERN, UUID.randomUUID(), multipartFile.getOriginalFilename());
             fileLoadingService.uploadFile(url, multipartFile.getInputStream());
             final var attachment = Attachment.builder()
                     .name(multipartFile.getName())
                     .url(url)
+                    .task(task)
                     .build();
             return mapper.toDto(repository.save(attachment));
         } catch (IOException e) {
@@ -54,7 +55,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public Resource download(UUID id, TrillaAuthentication authentication) {
         final var attachment = repository.findById(id).orElseThrow();
-        userAccessAuthorizer.checkAccess(attachment.getId(), attachment.getTask());
+        userAccessAuthorizer.checkAccess(authentication.id(), attachment.getTask());
         return new InputStreamResource(fileLoadingService.downloadFile(attachment.getUrl()));
     }
 

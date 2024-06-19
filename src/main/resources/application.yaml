@@ -1,10 +1,14 @@
 trilla:
   jwt:
     secret: secret
+  minio:
+    endpoint: http://127.0.0.1:9000
+    username: admin
+    password: admin123$
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/trilla}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5433/trilla}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
   jpa:

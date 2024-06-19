@@ -71,7 +71,7 @@ public class LinkTypeServiceImpl implements LinkTypeService {
     public void deleteById(UUID linkTypeId, TrillaAuthentication authentication) {
         final var linkType = repository.findById(linkTypeId).orElseThrow();
         authorizer.checkAccess(authentication.id(), linkType.getFrom().getProject(), Role.ADMIN);
-        linkRepository.deleteByLinkType(linkType);
+        linkRepository.deleteByIdLinkType(linkType);
         repository.delete(linkType);
     }
 
